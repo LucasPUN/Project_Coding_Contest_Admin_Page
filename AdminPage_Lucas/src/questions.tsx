@@ -11,28 +11,22 @@ import {
 } from "react-admin";
 import React from 'react';
 import BASE_URL from './BaseUrl';
+import {addEventQuestion} from "./api/eventquestionApi";
 
-const getQuestionID = () => {
-    const question = localStorage.getItem('question');
-    return question ? JSON.parse(question).id : null;
-};
+// const getQuestionID = () => {
+//     const question = localStorage.getItem('question');
+//     return question ? JSON.parse(question).id : null;
+// };
 
 export const QuestionList = () => {
 
-    function handleAddQuestion(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, questionId: string): void {
+    const loginUserStr = localStorage.getItem('user');
+    const loginUser = loginUserStr ? JSON.parse(loginUserStr) : { accessToken: '' };
+
+    function handleAddQuestion(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         const eventId = prompt("Enter Event ID:") || ""; // prompt user for event ID
-        const apiUrl = `${BASE_URL}/api/addEventQuestion/event/${eventId}/question/${questionId}`;
-
-        fetch(apiUrl)
-            .then(response => {
-                // handle response
-                console.log(response);
-            })
-            .catch(error => {
-                // handle error
-                console.log(error);
-
-            });
+        const questionId = prompt("Enter Question ID:") || "";
+        addEventQuestion(questionId,loginUser.accessToken, eventId)
     }
 
     return (
@@ -44,7 +38,7 @@ export const QuestionList = () => {
                 <TextField source="methodSignatures" />
                 <TextField source="targetCompleteTime" />
                 <EditButton />
-                <Button label="Add Question To Event" onClick={(event) => handleAddQuestion(event, getQuestionID())} />
+                <Button label="Add Question To Event" onClick={(event) => handleAddQuestion(event)} />
 
             </Datagrid>
         </List>

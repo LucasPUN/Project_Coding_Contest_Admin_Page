@@ -16,31 +16,18 @@ import {
 import React from 'react';
 
 import BASE_URL from './BaseUrl';
+import {addEventUser} from "./api/eventuserApi";
 
 export const UserList = () => {
-
-    const getUserID = () => {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user).id : null;
-    };
+    const loginUserStr = localStorage.getItem('user');
+    const loginUser = loginUserStr ? JSON.parse(loginUserStr) : { accessToken: '' };
 
     const isSmall = useMediaQuery<Theme>((theme) => theme.breakpoints.down("sm"));
 
-    // Corrected the type of 'event' from 'MouseEvent<HTMLButtonElement, MouseEvent>' to 'MouseEvent'
-    function handleAddUser(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, userId: string): void {
+    function handleAddUser(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         const eventId = prompt("Enter Event ID:") || ""; // prompt user for event ID
-        const apiUrl = `${BASE_URL}/api/join?userId=${userId}&eventId=${eventId}`;
-
-        fetch(apiUrl)
-            .then(response => {
-                // handle response
-                console.log(response);
-            })
-            .catch(error => {
-                // handle error
-                console.log(error);
-
-            });
+        const userId = prompt("Enter User ID:") || ""; // prompt user for event ID
+        addEventUser(userId, loginUser.accessToken, eventId);
     }
 
     return (
@@ -65,7 +52,7 @@ export const UserList = () => {
                     <TextField source="createddate" />
                     <TextField source="title" />
                     <EditButton />
-                    <Button label="Add User To Event" onClick={(event) => handleAddUser(event, getUserID())} />
+                    <Button label="Add User To Event" onClick={(event) => handleAddUser(event)} />
                 </Datagrid>
             )}
         </List>
